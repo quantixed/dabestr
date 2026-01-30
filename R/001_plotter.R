@@ -42,6 +42,7 @@ dabest_plot <- function(dabest_effectsize_obj, float_contrast = TRUE, ...) {
 
   plot_kwargs <- assign_plot_kwargs(dabest_effectsize_obj, plot_kwargs)
   custom_palette <- plot_kwargs$custom_palette
+  palette_values <- plot_kwargs$palette_values
 
   is_colour <- dabest_effectsize_obj$is_colour
   is_deltadelta <- plot_kwargs$show_delta2
@@ -59,8 +60,8 @@ dabest_plot <- function(dabest_effectsize_obj, float_contrast = TRUE, ...) {
 
   delta_plot <- delta_plot$delta_plot
 
-  raw_plot <- apply_palette(raw_plot, custom_palette)
-  delta_plot <- apply_palette(delta_plot, custom_palette)
+  raw_plot <- apply_palette(raw_plot, custom_palette, palette_values, length(unlist(idx)))
+  delta_plot <- apply_palette(delta_plot, custom_palette, palette_values, length(unlist(idx)))
 
   if (float_contrast) {
     final_plot <- cowplot::plot_grid(

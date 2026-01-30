@@ -621,7 +621,7 @@ add_delta_text_to_delta_plot <- function(delta_plot,
     custom_colour <- "black"
   } else {
     # use the default palette colours of the ggplot violin plot object
-    colours <- get_palette_colours(plot_kwargs$custom_palette, max(x_values))
+    colours <- get_palette_colours(plot_kwargs$custom_palette, max(x_values), plot_kwargs$palette_values)
     # Select colors at positions specified by x_values
     delta_text_colours <- colours[x_values]
   }
