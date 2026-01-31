@@ -50,8 +50,9 @@ dabest_plot <- function(dabest_effectsize_obj, float_contrast = TRUE, ...) {
   show_legend <- plot_kwargs$show_legend
   idx <- dabest_effectsize_obj$idx
   raw_legend <- NULL
+  total_groups <- length(unlist(idx))
 
-  if (length(unlist(idx)) >= 3) {
+  if (total_groups >= 3) {
     float_contrast <- FALSE
   }
 
@@ -60,8 +61,8 @@ dabest_plot <- function(dabest_effectsize_obj, float_contrast = TRUE, ...) {
 
   delta_plot <- delta_plot$delta_plot
 
-  raw_plot <- apply_palette(raw_plot, custom_palette, palette_values, length(unlist(idx)))
-  delta_plot <- apply_palette(delta_plot, custom_palette, palette_values, length(unlist(idx)))
+  raw_plot <- apply_palette(raw_plot, custom_palette, palette_values, total_groups, delta = FALSE)
+  delta_plot <- apply_palette(delta_plot, custom_palette, palette_values, total_groups, delta = TRUE)
 
   if (float_contrast) {
     final_plot <- cowplot::plot_grid(

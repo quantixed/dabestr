@@ -423,7 +423,7 @@ add_swarm_bars_to_raw_plot <- function(dabest_effectsize_obj, plot_kwargs, x_val
     swarm_bars_colours <- rep("black", length(x_values))
     custom_colour <- "black"
   } else {
-    swarm_bars_colours <- as.character(x_values)
+    swarm_bars_colours <- as.factor(x_values)
   }
 
   # Define width and height for each rectangle
@@ -497,7 +497,7 @@ add_contrast_bars_to_delta_plot <- function(dabest_effectsize_obj, plot_kwargs, 
     custom_colour <- "black"
   } else {
     # use the default palette colours of the ggplot violin plot object
-    contrast_bars_colours <- as.character((x_values))
+    contrast_bars_colours <- as.character(x_values)
     # contrast_bars_colours <- factor(as.character(x_values), levels = group_levels)
   }
 

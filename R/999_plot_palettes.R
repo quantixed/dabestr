@@ -4,51 +4,17 @@
 
 # Applies palettes to <ggplot> objects
 # TODO add proper documentation.
-apply_palette <- function(ggplot_object, palette_name, palette_values = NULL, num_groups) {
-  # check palette is valid
-  palette_name <- check_palette(palette_name, num_groups, palette_values)
-  ggplot_object <- switch(
-    palette_name,
-    "npg" =
-      ggplot_object + ggsci::scale_color_npg() + ggsci::scale_fill_npg(),
-    "aaas" =
-      ggplot_object + ggsci::scale_color_aaas() + ggsci::scale_fill_aaas(),
-    "nejm" =
-      ggplot_object + ggsci::scale_color_nejm() + ggsci::scale_fill_nejm(),
-    "lancet" =
-      ggplot_object + ggsci::scale_color_lancet() + ggsci::scale_fill_lancet(),
-    "jama" =
-      ggplot_object + ggsci::scale_color_jama() + ggsci::scale_fill_jama(),
-    "jco" =
-      ggplot_object + ggsci::scale_color_jco() + ggsci::scale_fill_jco(),
-    "ucscgb" =
-      ggplot_object + ggsci::scale_color_ucscgb() + ggsci::scale_fill_ucscgb(),
-    "d3" =
-      ggplot_object + ggsci::scale_color_d3() + ggsci::scale_fill_d3(),
-    "locuszoom" =
-      ggplot_object + ggsci::scale_color_locuszoom() + ggsci::scale_fill_locuszoom(),
-    "igv" =
-      ggplot_object + ggsci::scale_color_igv() + ggsci::scale_fill_igv(),
-    "cosmic" =
-      ggplot_object + ggsci::scale_color_cosmic() + ggsci::scale_fill_cosmic(),
-    "uchicago" =
-      ggplot_object + ggsci::scale_color_uchicago() + ggsci::scale_fill_uchicago(),
-    "brewer" =
-      ggplot_object + ggplot2::scale_color_brewer() + ggplot2::scale_fill_brewer(),
-    "ordinal" =
-      ggplot_object + ggplot2::scale_color_ordinal() + ggplot2::scale_fill_ordinal(),
-    "viridis_d" =
-      ggplot_object + ggplot2::scale_color_viridis_d() + ggplot2::scale_fill_viridis_d(),
-    "manual" =
-      ggplot_object + ggplot2::scale_color_manual(values = palette_values) + ggplot2::scale_fill_manual(values = palette_values),
-    "default" =
-      ggplot_object
-  )
+apply_palette <- function(ggplot_object, palette_name, palette_values = NULL, num_groups, delta = FALSE) {
+  
+  palette_values <- get_palette_colours(palette_name, num_groups, palette_values, delta)
+
+  ggplot_object <- ggplot_object +
+    ggplot2::scale_color_manual(values = palette_values) + ggplot2::scale_fill_manual(values = palette_values)
   
   return(ggplot_object)
 }
 
-get_palette_colours <- function(palette_name, num_colours, palette_values = NULL) {
+get_palette_colours <- function(palette_name, num_colours, palette_values = NULL, delta = FALSE) {
   # check palette is valid
   palette_name <- check_palette(palette_name, num_colours, palette_values)
   # palette function by name
@@ -68,8 +34,13 @@ get_palette_colours <- function(palette_name, num_colours, palette_values = NULL
                     "brewer" = RColorBrewer::brewer.pal(num_colours, "Accent"),
                     "ordinal" = viridisLite::viridis(n = num_colours, option = "viridis"),
                     "viridis_d" = viridisLite::viridis(n = num_colours, option = "viridis"),
-                    "manual" = palette_values
+                    "manual" = palette_values,
+                    "default" = ggplot2::hue_pal()(num_colours)
   )
+  if(delta) {
+    names(colours) <- as.character(seq_len(num_colours))
+  }
+
   if(is.null(colours)) {
     colours <- rep("black", num_colours)
   }
@@ -82,21 +53,27 @@ check_palette <- function(palette_name, num_groups, palette_values = NULL) {
     "d3" = 10,
     "npg" = 10,
     "aaas" = 10,
-    "nejm" = 10,
+    "nejm" = 8,
     "lancet" = 9,
     "jama" = 7,
     "jco" = 10,
     "ucscgb" = 26,
-    "d3" = 20,
-    "locuszoom" = 12,
-    "igv" = 20,
-    "cosmic" = 12,
-    "uchicago" = 10,
+    "locuszoom" = 7,
+    "igv" = 51,
+    "cosmic" = 10,
+    "uchicago" = 9,
     "brewer" = 8,
     "ordinal" = Inf,
     "viridis_d" = Inf,
-    "manual" = Inf
+    "manual" = Inf,
+    "default" = Inf
   )
+  # validate palette name
+  if (!(palette_name %in% names(max_colours))) {
+    warning(paste0("Palette '", palette_name, "' not recognized. Using default ggplot2 colours."))
+    palette_name <- "default"
+  }
+
   # check num_groups does not exceed max colours
   if (palette_name %in% names(max_colours)) {
     if (num_groups > max_colours[[palette_name]]) {
