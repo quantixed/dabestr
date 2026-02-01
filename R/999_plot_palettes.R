@@ -1,9 +1,13 @@
-# Helper functions that deal with assignment of colour palettes for the overall plots
-#
-# Contains function `apply_palette`.
-
-# Applies palettes to <ggplot> objects
-# TODO add proper documentation.
+#' Apply palette to ggplot object
+#'
+#' @param ggplot_object ggplot object to apply palette to
+#' @param palette_name name of palette to be used
+#' @param palette_values character vector of colours for manual palette
+#' @param num_groups maximum number of groups in raw or delta plot
+#' @param delta logical to indicate if colours for a delta plot are being generated
+#'
+#' @returns ggplot object with applied palette
+#' @noRd
 apply_palette <- function(ggplot_object, palette_name, palette_values = NULL, num_groups, delta = FALSE) {
   
   palette_values <- get_palette_colours(palette_name, num_groups, palette_values, delta)
@@ -21,6 +25,15 @@ apply_palette <- function(ggplot_object, palette_name, palette_values = NULL, nu
   return(ggplot_object)
 }
 
+#' Retrieve palette colours
+#'
+#' @param palette_name name of palette to be used
+#' @param num_colours number of colours to generate
+#' @param palette_values character vector of colours for manual palette
+#' @param delta logical to indicate if colours for a delta plot are being generated
+#'
+#' @returns character vector of colours
+#' @noRd
 get_palette_colours <- function(palette_name, num_colours, palette_values = NULL, delta = FALSE) {
   # check palette is valid
   palette_name <- check_palette(palette_name, num_colours, palette_values)
@@ -54,6 +67,17 @@ get_palette_colours <- function(palette_name, num_colours, palette_values = NULL
   return(colours)
 }
 
+
+
+#' Check palette validity
+#'
+#' @param palette_name name of palette to be used
+#' @param num_groups number of groups to be coloured
+#' @param palette_values character vector of colours for manual palette
+#'
+#' @returns string with valid palette name
+#' @noRd
+#'
 check_palette <- function(palette_name, num_groups, palette_values = NULL) {
   # list of max colours per palette
   max_colours <- list(
