@@ -7,9 +7,16 @@
 apply_palette <- function(ggplot_object, palette_name, palette_values = NULL, num_groups, delta = FALSE) {
   
   palette_values <- get_palette_colours(palette_name, num_groups, palette_values, delta)
-
-  ggplot_object <- ggplot_object +
-    ggplot2::scale_color_manual(values = palette_values) + ggplot2::scale_fill_manual(values = palette_values)
+  
+  # a warning here is inevitable because we cannot check beforehand if the
+  # ggplot_objects uses color and/or fill aesthetics
+  if(delta) {
+    ggplot_object <- ggplot_object +
+      ggplot2::scale_fill_manual(values = palette_values)
+  } else{
+    ggplot_object <- ggplot_object +
+      ggplot2::scale_color_manual(values = palette_values) + ggplot2::scale_fill_manual(values = palette_values)
+  }
   
   return(ggplot_object)
 }
@@ -35,12 +42,12 @@ get_palette_colours <- function(palette_name, num_colours, palette_values = NULL
                     "ordinal" = viridisLite::viridis(n = num_colours, option = "viridis"),
                     "viridis_d" = viridisLite::viridis(n = num_colours, option = "viridis"),
                     "manual" = palette_values,
-                    "default" = ggplot2::hue_pal()(num_colours)
+                    "default" = scales::hue_pal()(num_colours)
   )
   if(delta) {
     names(colours) <- as.character(seq_len(num_colours))
   }
-
+  
   if(is.null(colours)) {
     colours <- rep("black", num_colours)
   }
@@ -73,7 +80,7 @@ check_palette <- function(palette_name, num_groups, palette_values = NULL) {
     warning(paste0("Palette '", palette_name, "' not recognized. Using default ggplot2 colours."))
     palette_name <- "default"
   }
-
+  
   # check num_groups does not exceed max colours
   if (palette_name %in% names(max_colours)) {
     if (num_groups > max_colours[[palette_name]]) {
